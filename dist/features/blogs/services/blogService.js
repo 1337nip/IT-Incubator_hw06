@@ -1,0 +1,69 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.blogService = void 0;
+const blogRepository_1 = require("../repositories/blogRepository");
+const mongo_db_1 = require("../../../db/mongo-db");
+const sharedTypes_1 = require("../../../types/sharedTypes");
+exports.blogService = {
+    deleteBlog(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield blogRepository_1.blogsRepository.deleteBlog(id);
+            }
+            catch (error) {
+                throw new Error(`Cannot delete blog in repository: ${error.message}`);
+            }
+        });
+    },
+    createBlog(body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { name, description, websiteUrl } = body;
+            const latestBlog = yield mongo_db_1.blogsCollection.findOne({}, { sort: { _id: -1 } });
+            let newID;
+            if (latestBlog) {
+                newID = (Number(latestBlog.id) + 1).toString();
+            }
+            else {
+                newID = "1";
+            }
+            const newBlog = {
+                id: newID,
+                name,
+                description,
+                websiteUrl,
+                createdAt: (new Date()).toISOString(),
+                isMembership: false
+            };
+            try {
+                yield blogRepository_1.blogsRepository.createBlog(newBlog);
+                return newBlog.id;
+            }
+            catch (error) {
+                throw new Error(`Cannot create new blog in repository: ${error.message}`);
+            }
+        });
+    },
+    updateBlog(id, body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield mongo_db_1.blogsCollection.findOne({ id });
+            if (result === null) {
+                throw new sharedTypes_1.Error404('Blog to udpate is not found');
+            }
+            try {
+                yield blogRepository_1.blogsRepository.updateBlog(id, body);
+            }
+            catch (error) {
+                throw new Error(`Cannot update blog: ${error.message}`);
+            }
+        });
+    }
+};
