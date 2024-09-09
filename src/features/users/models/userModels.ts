@@ -55,3 +55,9 @@ export type getUsersReturn = {
         users: userDbModel[],
         totalCount: number
 }
+
+export type authMeViewModel = {
+        email: string,
+        login:  string,
+        userId: string
+}

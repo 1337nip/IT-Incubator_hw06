@@ -9,27 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authService = void 0;
-const mongo_db_1 = require("../../../db/mongo-db");
-const jwtService_1 = require("../../../services/jwtService");
-const passwordHashing_1 = require("../../../utilities/passwordHashing");
-exports.authService = {
-    login(loginOrEmail, password) {
+exports.commentController = void 0;
+const sharedTypes_1 = require("../../../types/sharedTypes");
+const commentService_1 = require("../services/commentService");
+const commentQueryRepo_1 = require("../repositories/commentQueryRepo");
+exports.commentController = {
+    createComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const filter = {
-                    $or: [{ login: loginOrEmail }, { email: loginOrEmail }]
-                };
-                const result = yield mongo_db_1.userCollection.findOne(filter);
-                if (result === null)
-                    return false;
-                const pswCheck = yield (0, passwordHashing_1.checkPassword)(password, result.passwordHash);
-                if (pswCheck === false)
-                    return false;
-                return yield jwtService_1.jwtService.jwtCreate(result);
+                const newCommentId = yield commentService_1.commentService.createComment(req.params.id, req.userId, req.body);
+                const newCommentOuput = yield commentQueryRepo_1.commentQueryRepo.findComment(newCommentId);
+                if (newCommentOuput)
+                    res.status(201).json(newCommentOuput);
             }
             catch (error) {
-                throw new Error(`Cannot execute login: ${error.message}`);
+                if (error instanceof sharedTypes_1.Error404)
+                    res.sendStatus(404);
+                else {
+                    console.error(Error);
+                    res.sendStatus(500);
+                }
             }
         });
     }

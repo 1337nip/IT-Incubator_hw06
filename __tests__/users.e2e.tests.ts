@@ -3,7 +3,7 @@ import { connectToDb, userCollection } from '../src/db/mongo-db';
 import request from 'supertest';
 import {app} from '../src/app'
 import { userDbModel, userCreateModel, userInputModel, userPaginationModel } from '../src/features/users/models/userModels';
-import { fill } from './testData';
+import { fillUsers } from './testData';
 import { userQueryHelper } from '../src/features/users/utilities/userQueryHelper';
 
 describe ('/users/', () => {
@@ -330,7 +330,7 @@ let mongod:MongoMemoryServer
 
 
     it('GET /users without search, default pagination ', async() =>  {
-        userCollection.insertMany(fill)
+        userCollection.insertMany(fillUsers)
         const jestResponse = await request(app)
         .get('/users')
         .expect(200)

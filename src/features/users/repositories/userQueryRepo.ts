@@ -1,5 +1,5 @@
 import { userCollection } from "../../../db/mongo-db";
-import { getUsersReturn, userDbModel, userPaginationModel, userQuery, userViewModel} from "../models/userModels";
+import { authMeViewModel, getUsersReturn, userDbModel, userPaginationModel, userQuery, userViewModel} from "../models/userModels";
 import { userQueryHelper } from "../utilities/userQueryHelper";
 
 
@@ -57,5 +57,20 @@ export const userQueryRepo = {
             "totalCount": totalCount,
             "items": usersOutput
             }
-     }
+     },
+
+     async findUserByToken (id:string):Promise<authMeViewModel|null> {
+        const user = await userCollection.findOne({id})
+        if(user === null)
+            return null;
+
+        const userOutput = {
+
+                email: user.email,
+                login: user.login,
+                userId: user.id
+            }
+            
+        return userOutput;
+    },
 }

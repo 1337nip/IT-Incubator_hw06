@@ -63,5 +63,18 @@ exports.userQueryRepo = {
                 "items": usersOutput
             };
         });
-    }
+    },
+    findUserByToken(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield mongo_db_1.userCollection.findOne({ id });
+            if (user === null)
+                return null;
+            const userOutput = {
+                email: user.email,
+                login: user.login,
+                userId: user.id
+            };
+            return userOutput;
+        });
+    },
 };

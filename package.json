@@ -33,6 +33,7 @@
     "start": "node dist/index.js",
     "test blogs": "jest __tests__/blogs.e2e.tests.ts",
     "test users": "jest __tests__/users.e2e.tests.ts --detectOpenHandles",
-    "test auth": "jest __tests__/auth.e2e.tests.ts --detectOpenHandles"
+    "test auth": "jest __tests__/auth.e2e.tests.ts --detectOpenHandles",
+    "test comments": "jest __tests__/comments.e2e.tests.ts --detectOpenHandles"
   }
 }

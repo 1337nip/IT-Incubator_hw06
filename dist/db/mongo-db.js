@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.eraseDB = exports.connectToDb = exports.userCollection = exports.postsCollection = exports.blogsCollection = void 0;
+exports.eraseDB = exports.connectToDb = exports.commentCollection = exports.userCollection = exports.postsCollection = exports.blogsCollection = void 0;
 const mongodb_1 = require("mongodb");
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
@@ -18,6 +18,7 @@ let db = {};
 exports.blogsCollection = {};
 exports.postsCollection = {};
 exports.userCollection = {};
+exports.commentCollection = {};
 const connectToDb = (MONGO_URL) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         client = new mongodb_1.MongoClient(MONGO_URL);
@@ -25,6 +26,7 @@ const connectToDb = (MONGO_URL) => __awaiter(void 0, void 0, void 0, function* (
         exports.blogsCollection = db.collection('blogs');
         exports.postsCollection = db.collection('posts');
         exports.userCollection = db.collection('users');
+        exports.commentCollection = db.collection('comments');
         yield client.connect();
         yield db.command({ ping: 1 });
         console.log('Connected to DB');

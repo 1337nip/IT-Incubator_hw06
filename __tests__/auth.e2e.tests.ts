@@ -2,7 +2,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connectToDb, userCollection } from '../src/db/mongo-db';
 import request from 'supertest';
 import {app} from '../src/app'
-import { fill } from './testData';
+import { fillUsers } from './testData';
 
 
 describe ('/users/', () => {
@@ -15,7 +15,7 @@ let mongod:MongoMemoryServer
         await connectToDb(uri)
 
         await userCollection.deleteMany()
-        await userCollection.insertMany(fill)
+        await userCollection.insertMany(fillUsers)
         console.log('Refresh succesful')
     })
 
@@ -64,6 +64,33 @@ let mongod:MongoMemoryServer
 
         expect(jestResponse2.body).toEqual({
             "accessToken": expect.any(String)
+        })
+    })
+
+    it('auth/me does not return data without correct token', async() =>{
+        await request(app)
+        .get('/auth/me')
+        .set({Authorization: 'Bearer thistokencannotbecorrect'})
+        .expect(401)
+    }) 
+    
+    it('auth/me returns correct viewModel with correct token', async()=>{
+        const jestResponse = await request(app)
+        .post('/auth/login')
+        .send({loginOrEmail: 'Bohr', password:'fpPznXf1UwAjhz1M9ai1'})
+        .expect(200)
+
+        const token = jestResponse.body.accessToken
+
+        const jestResponse2 = await request(app)
+        .get('/auth/me')
+        .set({Authorization: 'Bearer ' + token})
+        .expect(200)
+
+        expect(jestResponse2.body).toEqual({
+            email: "newphysics@test.com",
+            login:  "Bohr",
+            userId: "2"
         })
     })
 
