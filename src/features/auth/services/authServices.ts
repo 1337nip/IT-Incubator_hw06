@@ -1,10 +1,11 @@
 import { userCollection } from "../../../db/mongo-db";
+import { jwtService } from "../../../services/jwtService";
 import { ErrorResponse } from "../../../types/sharedTypes";
 import { checkPassword } from "../../../utilities/passwordHashing";
 
 export const authService = {
     
-    async login(loginOrEmail:string, password:string):Promise<boolean|ErrorResponse> {
+    async login(loginOrEmail:string, password:string):Promise<boolean|string|ErrorResponse> {
         
         try {
             const filter = {
@@ -18,7 +19,7 @@ export const authService = {
             if(pswCheck === false) 
             return false;
             
-            return true;
+            return await jwtService.jwtCreate(result)
         }
 
         catch(error) {

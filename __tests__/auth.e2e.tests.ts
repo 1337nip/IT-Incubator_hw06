@@ -48,15 +48,23 @@ let mongod:MongoMemoryServer
         .send({loginOrEmail: 'Einstein', password:'56546'})
         .expect(401)
 
-        await request(app)
+        const jestResponse1 =await request(app)
         .post('/auth/login')
         .send({loginOrEmail: 'Bohr', password:'fpPznXf1UwAjhz1M9ai1'})
-        .expect(204)
+        .expect(200)
 
-        await request(app)
+        expect(jestResponse1.body).toEqual({
+            "accessToken": expect.any(String)
+        })
+
+        const jestResponse2 = await request(app)
         .post('/auth/login')
         .send({loginOrEmail: 'newphysics@test.com', password:'fpPznXf1UwAjhz1M9ai1'})
-        .expect(204)
+        .expect(200)
+
+        expect(jestResponse2.body).toEqual({
+            "accessToken": expect.any(String)
+        })
     })
 
 })

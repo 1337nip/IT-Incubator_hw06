@@ -1,18 +1,19 @@
 import { Request, Response } from "express";
-import { authLoginModel } from "../models/authModels";
+import { accessToken, authLoginModel } from "../models/authModels";
 import { ErrorResponse } from "../../../types/sharedTypes";
 import { authService } from "../services/authServices";
 
 
 export const authControllers = {
 
-    async authLogin(req:Request<{},{},authLoginModel>, res:Response<ErrorResponse>) {
+    async authLogin(req:Request<{},{},authLoginModel>, res:Response<accessToken|ErrorResponse>) {
         try {
            const result = await authService.login(req.body.loginOrEmail, req.body.password)
-            if(result === true) 
-            res.sendStatus(204)
-            else 
+            if(result === false) 
             res.sendStatus(401)
+            else 
+            if (result)
+            res.status(200).json({"accessToken": result as string})
         }
         catch(error) {
         console.error(`Server fail when trying to login: ${(error as Error).message}`)
