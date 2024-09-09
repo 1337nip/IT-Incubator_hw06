@@ -8,7 +8,7 @@ export const commentController = {
 
     async createComment  (req:Request<{id:string}>, res:Response<commentViewModel>) {
         try {
-            const newCommentId = await commentService.createComment(req.params.id, req.userId!, req.body)
+            const newCommentId = await commentService.createComment(req.params.id, req.userId!, req.body.content)
             const newCommentOuput = await commentQueryRepo.findComment(newCommentId)
             if(newCommentOuput)
             res.status(201).json(newCommentOuput)
@@ -21,5 +21,15 @@ export const commentController = {
             res.sendStatus(500)
             }
         }
+    },
+
+    async findComment (req:Request<{id:string}>, res:Response<commentViewModel>){
+        const commentOutput = await commentQueryRepo.findComment(req.params.id)
+        if(commentOutput === null) {
+        res.sendStatus(404)
+        return; 
+        }
+        res.status(200).json(commentOutput)
+        return;
     }
 }

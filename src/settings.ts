@@ -4,7 +4,8 @@ export const SETTINGS = {
         BLOGS: '/blogs',
         POSTS: '/posts',
         USERS: '/users',
-        AUTH: '/auth'
+        AUTH: '/auth',
+        COMMENTS:'/comments'
     },
     JWT : {
         SECRET: process.env.JWT_SECRET || 'HQqTu^kn2RNAbDCV*C=nqa^mU)'

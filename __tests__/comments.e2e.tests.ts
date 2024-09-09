@@ -37,7 +37,7 @@ let mongod:MongoMemoryServer
     it('do not create comment with invalid input', async() => {
         const jestResponse = await request(app)
         .post('/posts/1/comments')
-        .set({Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaWF0IjoxNzI1ODk1Njg4LCJleHAiOjE3MjY3NTk2ODh9.iBTlfgm5llxKCjVt8NoEPOuskmVu1znTok4_aR6Nc3o'})
+        .set({Authorization: token})
         .send({content: 'no'})
         .expect(400)
 
@@ -51,7 +51,7 @@ let mongod:MongoMemoryServer
 
         const jestResponse2 = await request(app)
         .post('/posts/1/comments')
-        .set({Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaWF0IjoxNzI1ODk1Njg4LCJleHAiOjE3MjY3NTk2ODh9.iBTlfgm5llxKCjVt8NoEPOuskmVu1znTok4_aR6Nc3o'})
+        .set({Authorization: token})
         .send({content: 125})
         .expect(400)
 
@@ -65,7 +65,7 @@ let mongod:MongoMemoryServer
 
         const jestResponse3 = await request(app)
         .post('/posts/1/comments')
-        .set({Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaWF0IjoxNzI1ODk1Njg4LCJleHAiOjE3MjY3NTk2ODh9.iBTlfgm5llxKCjVt8NoEPOuskmVu1znTok4_aR6Nc3o'})
+        .set({Authorization: token})
         .expect(400)
 
         expect(jestResponse3.body).toEqual({
@@ -80,12 +80,42 @@ let mongod:MongoMemoryServer
     it('do not create comment to a non-existent post', async()=> {
         await request(app)
         .post('/posts/999/comments')
-        .set({Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaWF0IjoxNzI1ODk1Njg4LCJleHAiOjE3MjY3NTk2ODh9.iBTlfgm5llxKCjVt8NoEPOuskmVu1znTok4_aR6Nc3o'})
+        .set({Authorization: token})
         .send({content: 'Sed ut perspiciatis unde omnis iste natus error'})
         .expect(404)
     })
 
-   // it('create comment, check response, check creation in DB')
+   it('create comment, check response, check creation in DB', async()=> {
+    const jestResponse = await request(app)
+        .post('/posts/1/comments')
+        .set({Authorization: token})
+        .send({content: 'Sed ut perspiciatis unde omnis iste natus error'})
+        .expect(201)
+
+        expect(jestResponse.body).toEqual({
+            id: "1",
+            content: "Sed ut perspiciatis unde omnis iste natus error",
+            commentatorInfo: {
+                userId: '2',
+                userLogin: 'Bohr'
+            },
+            "createdAt": expect.any(String)
+        })
+
+        const jestResponse2 = await request(app)
+        .get('/comments/1')
+        .expect(200)
+
+        expect(jestResponse2.body).toEqual({
+            id: "1",
+            content: "Sed ut perspiciatis unde omnis iste natus error",
+            commentatorInfo: {
+                userId: '2',
+                userLogin: 'Bohr'
+            },
+            "createdAt": expect.any(String)
+        })
+   }) 
 
 })
 

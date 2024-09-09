@@ -20,12 +20,14 @@ const settings_1 = require("./settings");
 const mongo_db_1 = require("./db/mongo-db");
 const userRoutes_1 = require("./features/users/routes/userRoutes");
 const authRoutes_1 = require("./features/auth/routes/authRoutes");
+const commentRoutes_1 = require("./features/comments/routes/commentRoutes");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
 exports.app.use(settings_1.SETTINGS.PATH.BLOGS, blogRoutes_1.blogsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.POSTS, postRoutes_1.postsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.USERS, userRoutes_1.userRouter);
 exports.app.use(settings_1.SETTINGS.PATH.AUTH, authRoutes_1.authRouter);
+exports.app.use(settings_1.SETTINGS.PATH.COMMENTS, commentRoutes_1.commentRouter);
 exports.app.delete('/testing/all-data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, mongo_db_1.eraseDB)();
     res.sendStatus(204);

@@ -17,7 +17,7 @@ exports.commentController = {
     createComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const newCommentId = yield commentService_1.commentService.createComment(req.params.id, req.userId, req.body);
+                const newCommentId = yield commentService_1.commentService.createComment(req.params.id, req.userId, req.body.content);
                 const newCommentOuput = yield commentQueryRepo_1.commentQueryRepo.findComment(newCommentId);
                 if (newCommentOuput)
                     res.status(201).json(newCommentOuput);
@@ -30,6 +30,17 @@ exports.commentController = {
                     res.sendStatus(500);
                 }
             }
+        });
+    },
+    findComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const commentOutput = yield commentQueryRepo_1.commentQueryRepo.findComment(req.params.id);
+            if (commentOutput === null) {
+                res.sendStatus(404);
+                return;
+            }
+            res.status(200).json(commentOutput);
+            return;
         });
     }
 };
