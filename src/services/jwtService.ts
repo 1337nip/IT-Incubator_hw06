@@ -20,7 +20,7 @@ export const jwtService = {
             return result.userId
            }
         catch (error) {
-            console.error((error as Error).message)
+            console.error(`JWTGetUserId $((error as Error).message)`)
             throw new Error
 
         }

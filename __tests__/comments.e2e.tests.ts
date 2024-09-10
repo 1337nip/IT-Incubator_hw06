@@ -215,7 +215,14 @@ let mongod:MongoMemoryServer
         expect(404)
    })
 
-   it('should return allComments for postId with default pagination', async() =>{
+   it('return 404 for invalid postId/comments', async() =>{
+        await(app)
+        .get('/posts/5555/comments')
+        .expect(404)
+   })
+
+
+   it('return allComments for postId with default pagination', async() =>{
         await (commentCollection).insertMany(fillComments)
         const check = await commentCollection
         .find({postId:'1'}, {projection: {_id:0, postId:0 } })
@@ -241,7 +248,7 @@ let mongod:MongoMemoryServer
         expect(jestResponse.body).toEqual(checkOutput)
    })
 
-   it('should return allComments for postId with query pagination', async() =>{
+   it('return allComments for postId with query pagination', async() =>{
        
      const check = await commentCollection
         .find({postId:'1'}, {projection: {_id:0, postId:0 }})

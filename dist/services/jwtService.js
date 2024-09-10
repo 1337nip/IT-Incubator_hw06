@@ -34,7 +34,7 @@ exports.jwtService = {
                 return result.userId;
             }
             catch (error) {
-                console.error(error.message);
+                console.error(`JWTGetUserId $((error as Error).message)`);
                 throw new Error;
             }
         });
