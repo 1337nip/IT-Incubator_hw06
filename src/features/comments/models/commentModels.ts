@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb"
+import { ObjectId } from 'mongodb'
 
 export type commentDbModel = {
         _id?: ObjectId,
@@ -33,4 +33,13 @@ export type commentViewModel = {
       userLogin: string
     },
     createdAt: string 
+}
+
+export type commentPaginationModel = {
+  'pagesCount': number,
+  'page': number,
+  'pageSize': number,
+  'totalCount': number,
+  'items': commentViewModel[]
+  
 }

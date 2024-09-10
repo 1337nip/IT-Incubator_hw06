@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentQueryRepo = void 0;
 const mongo_db_1 = require("../../../db/mongo-db");
+const commentQueryHelper_1 = require("../utilities/commentQueryHelper");
 exports.commentQueryRepo = {
     findComment(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24,6 +25,26 @@ exports.commentQueryRepo = {
                 createdAt: comment.createdAt
             };
             return commentOuput;
+        });
+    },
+    getAllComments(id, query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const processedQuery = (0, commentQueryHelper_1.commentQueryHelper)(query);
+            const items = yield mongo_db_1.commentCollection
+                .find({ postId: id }, { projection: { _id: 0, postId: 0 } })
+                .sort(processedQuery.sortBy, processedQuery.sortDirection)
+                .skip((processedQuery.pageNumber - 1) * processedQuery.pageSize)
+                .limit(processedQuery.pageSize)
+                .toArray();
+            const totalCount = yield mongo_db_1.commentCollection.countDocuments({ postId: id });
+            const pagesCount = Math.ceil(totalCount / processedQuery.pageSize);
+            return {
+                'pagesCount': pagesCount,
+                'page': processedQuery.pageNumber,
+                'pageSize': processedQuery.pageSize,
+                'totalCount': totalCount,
+                'items': items
+            };
         });
     }
 };

@@ -20,3 +20,4 @@ exports.postsRouter.delete('/:id', authorizationMdw_1.requestAuthorization, dele
 exports.postsRouter.post('/', authorizationMdw_1.requestAuthorization, postInputValidator_1.postInputValidator, returnValidationMessages_1.returnValidationErrors, createPostController_1.createPostController);
 exports.postsRouter.put('/:id', authorizationMdw_1.requestAuthorization, postInputValidator_1.postInputValidator, returnValidationMessages_1.returnValidationErrors, updatePostController_1.updatePostController);
 exports.postsRouter.post('/:id/comments', authJWTmiddleware_1.authJWTmiddleware, commentInputValidator_1.commentInputValidator, returnValidationMessages_1.returnValidationErrors, commentControllers_1.commentController.createComment);
+exports.postsRouter.get('/:id/comments', commentControllers_1.commentController.getAllComments);

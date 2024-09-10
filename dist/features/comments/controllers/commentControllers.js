@@ -42,5 +42,47 @@ exports.commentController = {
             res.status(200).json(commentOutput);
             return;
         });
+    },
+    deleteComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield commentService_1.commentService.deleteComment(req.params.id, req.userId);
+                if (result === null) {
+                    res.sendStatus(404);
+                    return;
+                }
+                if (result === false) {
+                    res.sendStatus(403);
+                    return;
+                }
+                res.sendStatus(204);
+                return;
+            }
+            catch (error) {
+                console.error(error.message);
+            }
+        });
+    },
+    getAllComments(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield commentQueryRepo_1.commentQueryRepo.getAllComments(req.params.id, req.query);
+            res.status(200).json(result);
+        });
+    },
+    updateComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield commentService_1.commentService.updateComment(req.params.id, req.userId, req.body.content);
+                if (result === null)
+                    res.sendStatus(404);
+                if (result === false)
+                    res.sendStatus(403);
+                res.sendStatus(204);
+                return;
+            }
+            catch (error) {
+                console.error(error.message);
+            }
+        });
     }
 };

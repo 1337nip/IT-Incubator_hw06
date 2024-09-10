@@ -34,5 +34,37 @@ export const commentService = {
 
         await commentRepository.createComment(newComment)
         return id;
+    },
+
+    async deleteComment(id:string, userId:string):Promise<null | boolean> {
+        const checkComment = await commentRepository.findComment(id)
+        if(checkComment === null) {
+            return null;
+        }
+       if(checkComment.commentatorInfo.userId !== userId)
+            return false;
+
+      try {
+            await commentRepository.deleteComment(id)
+      }
+        catch(error) {
+            console.error((error as Error).message)
+       }
+       return true;
+    },
+
+    async updateComment(id:string, userId:string, content:string ):Promise<null | boolean> {
+        const result = await commentRepository.findComment(id)
+        if(result === null)
+            return null;
+        if(result.commentatorInfo.userId !== userId)
+            return false;
+        try {
+        await commentRepository.updateComment(id, content)
+        }
+        catch(error) {
+            console.error((error as Error).message)
+        }
+        return true;
     }
 }

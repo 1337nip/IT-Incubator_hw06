@@ -16,5 +16,22 @@ exports.commentRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             yield mongo_db_1.commentCollection.insertOne(newComment);
         });
+    },
+    findComment(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield mongo_db_1.commentCollection.findOne({ id: id });
+        });
+    },
+    deleteComment(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield mongo_db_1.commentCollection.deleteOne({ id: id });
+            if (result.deletedCount === 0)
+                return null;
+        });
+    },
+    updateComment(id, content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield mongo_db_1.commentCollection.updateOne({ id }, { $set: { content: content } });
+        });
     }
 };

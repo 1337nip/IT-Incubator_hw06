@@ -1,8 +1,10 @@
 import { Request, Response } from "express"
-import { commentViewModel } from "../models/commentModels"
+import { commentViewModel, commentPaginationModel } from "../models/commentModels"
 import { Error404 } from "../../../types/sharedTypes"
 import { commentService } from "../services/commentService"
 import { commentQueryRepo } from "../repositories/commentQueryRepo"
+import { commentRepository } from "../repositories/commentRepository"
+
 
 export const commentController = {
 
@@ -31,5 +33,45 @@ export const commentController = {
         }
         res.status(200).json(commentOutput)
         return;
+    },
+
+    async deleteComment(req:Request<{id:string}>, res:Response){
+        try {
+        const result = await commentService.deleteComment(req.params.id, req.userId!)
+        if(result === null) {
+            res.sendStatus(404)
+            return;
+            }
+        if(result === false) {
+            res.sendStatus(403)
+            return;
+        }
+        res.sendStatus(204)
+        return;
+        }
+        catch (error) {
+            console.error((error as Error).message)
+        }
+    },
+
+    async getAllComments(req:Request<{id:string},{},{},{ [key:string] : string | undefined}>, res:Response<commentPaginationModel>) {
+        const result = await commentQueryRepo.getAllComments(req.params.id, req.query)
+        res.status(200).json(result)
+    },
+
+    async updateComment(req:Request<{id:string}>, res:Response) {
+        try {
+        const result = await commentService.updateComment(req.params.id, req.userId!, req.body.content)
+        if(result === null)
+        res.sendStatus(404)
+        if(result === false)
+        res.sendStatus(403)
+
+        res.sendStatus(204)
+        return;
+        }
+        catch (error) {
+            console.error((error as Error).message)
+        }
     }
 }
