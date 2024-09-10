@@ -56,7 +56,12 @@ export const commentController = {
 
     async getAllComments(req:Request<{id:string},{},{},{ [key:string] : string | undefined}>, res:Response<commentPaginationModel>) {
         const result = await commentQueryRepo.getAllComments(req.params.id, req.query)
+        if(result === null) {
+        res.sendStatus(404)
+        return;
+        }
         res.status(200).json(result)
+        return;
     },
 
     async updateComment(req:Request<{id:string}>, res:Response) {

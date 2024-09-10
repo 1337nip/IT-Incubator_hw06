@@ -66,7 +66,12 @@ exports.commentController = {
     getAllComments(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield commentQueryRepo_1.commentQueryRepo.getAllComments(req.params.id, req.query);
+            if (result === null) {
+                res.sendStatus(404);
+                return;
+            }
             res.status(200).json(result);
+            return;
         });
     },
     updateComment(req, res) {
