@@ -212,11 +212,11 @@ let mongod:MongoMemoryServer
 
         await request(app)
         .get('/comments/1')
-        expect(404)
+        .expect(404)
    })
 
    it('return 404 for invalid postId/comments', async() =>{
-        await(app)
+        await request(app)
         .get('/posts/5555/comments')
         .expect(404)
    })

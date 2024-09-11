@@ -3,6 +3,7 @@ import { blogsCollection, postsCollection } from "../../../db/mongo-db";
 import { postCreateModel, postUpdateModel } from "../models/postInputModels";
 
 import { ErrorResponse } from "../../../types/sharedTypes";
+import { postsType } from "../models/postType";
 
 export const postsRepository = {
 
@@ -49,5 +50,9 @@ export const postsRepository = {
       catch (error) {
          throw new Error(`Cannot create new post with blog id in repository: ${(error as Error).message}`)
       }
+   },
+
+   async findPost(postId:string):Promise<postsType | null>{
+      return await postsCollection.findOne({id: postId})
    }
 }

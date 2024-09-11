@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsQueryRepo = void 0;
 const mongo_db_1 = require("../../../db/mongo-db");
+const pagesCount_1 = require("../../../utilities/others/pagesCount");
 const blogQueryHelper_1 = require("../utilities/blogQueryHelper");
 exports.blogsQueryRepo = {
     getAllBlogs(query) {
@@ -24,7 +25,7 @@ exports.blogsQueryRepo = {
                 .limit(processedQuery.pageSize)
                 .toArray();
             const totalCount = yield mongo_db_1.blogsCollection.countDocuments(filter);
-            const pagesCount = Math.ceil(totalCount / processedQuery.pageSize);
+            const pagesCount = (0, pagesCount_1.countPages)(totalCount, processedQuery.pageSize);
             return {
                 "pagesCount": pagesCount,
                 "page": processedQuery.pageNumber,

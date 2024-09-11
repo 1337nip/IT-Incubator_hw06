@@ -7,4 +7,4 @@ export const commentQueryHelper = (query: {[key:string] : string | undefined}) =
         sortBy : query.sortBy ? query.sortBy: 'createdAt',
         sortDirection: query.sortDirection ? query.sortDirection as SortDirection: 'desc',
     }
-}
+} //TODO тут нужно оформить санитайзер

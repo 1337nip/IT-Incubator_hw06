@@ -14,6 +14,7 @@ const mongo_db_1 = require("../../../db/mongo-db");
 const postQueryHelper_1 = require("../utilities/postQueryHelper");
 const mongo_db_2 = require("../../../db/mongo-db");
 const sharedTypes_1 = require("../../../types/sharedTypes");
+const pagesCount_1 = require("../../../utilities/others/pagesCount");
 exports.postsQueryRepo = {
     getAllPosts(query) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25,7 +26,7 @@ exports.postsQueryRepo = {
                 .limit(processedQuery.pageSize)
                 .toArray();
             const totalCount = yield mongo_db_1.postsCollection.countDocuments();
-            const pagesCount = Math.ceil(totalCount / processedQuery.pageSize);
+            const pagesCount = (0, pagesCount_1.countPages)(totalCount, processedQuery.pageSize);
             return {
                 "pagesCount": pagesCount,
                 "page": processedQuery.pageNumber,

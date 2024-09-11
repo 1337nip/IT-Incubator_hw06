@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Error404 = void 0;
+exports.StatusCode = exports.Error404 = void 0;
 class Error404 extends Error {
     constructor(message) {
         super(message);
@@ -8,3 +8,9 @@ class Error404 extends Error {
     }
 }
 exports.Error404 = Error404;
+var StatusCode;
+(function (StatusCode) {
+    StatusCode[StatusCode["NotFound"] = 4] = "NotFound";
+    StatusCode[StatusCode["Forbidden"] = 3] = "Forbidden";
+    StatusCode[StatusCode["Success"] = 0] = "Success";
+})(StatusCode || (exports.StatusCode = StatusCode = {}));
