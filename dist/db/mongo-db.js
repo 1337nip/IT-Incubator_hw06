@@ -38,8 +38,9 @@ const connectToDb = (MONGO_URL) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.connectToDb = connectToDb;
 const eraseDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield exports.blogsCollection.drop();
-    yield exports.postsCollection.drop();
-    yield exports.userCollection.drop();
+    yield exports.blogsCollection.deleteMany();
+    yield exports.postsCollection.deleteMany();
+    yield exports.userCollection.deleteMany();
+    yield exports.commentCollection.deleteMany();
 });
 exports.eraseDB = eraseDB;

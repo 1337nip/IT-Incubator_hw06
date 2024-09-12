@@ -7,8 +7,8 @@ import { commentViewModel } from '../src/features/comments/models/commentModels'
 
 
 describe ('/comments/', () => {
-const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaWF0IjoxNzI1ODk1Njg4LCJleHAiOjE3MjY3NTk2ODh9.iBTlfgm5llxKCjVt8NoEPOuskmVu1znTok4_aR6Nc3o' //Bohr
-const token2 = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzIiwiaWF0IjoxNzI1OTQ0ODA3LCJleHAiOjE3MjY4MDg4MDd9.gZg6so7VeR91JZ-8yNUQdYeb3DxqfBOakkpJxP2Vfe4' //Kurchatov
+const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmUyOGQ5MWM0ZjNiN2YxMjA0ZTIyMmEiLCJpYXQiOjE3MjYxMjM0MzksImV4cCI6MTcyNjk4NzQzOX0.pDMDisUHQh9NdPUvS5Mt0U054170Wj0e8vVMML-fFIU' //Bohr
+const token2 = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmUyOTEyNGM0ZjNiN2YxMjA0ZTIyMmMiLCJpYXQiOjE3MjYxMjQzNTEsImV4cCI6MTcyNjk4ODM1MX0.NZ96IGyrrtEH5KZTdmnnvmktr3G9eIC2qazmlfLbvSo' //Kurchatov
 
 let mongod:MongoMemoryServer
 
@@ -22,6 +22,7 @@ let mongod:MongoMemoryServer
         await postsCollection.deleteMany()
         await postsCollection.insertMany(fillPosts)
         await commentCollection.deleteMany()
+        await commentCollection.insertMany(fillComments)
         console.log('Refresh succesful')
     })
 
@@ -95,24 +96,24 @@ let mongod:MongoMemoryServer
         .expect(201)
 
         expect(jestResponse.body).toEqual({
-            id: "1",
+            id: expect.any(String),
             content: "Sed ut perspiciatis unde omnis iste natus error",
             commentatorInfo: {
-                userId: '2',
+                userId: '66e28d91c4f3b7f1204e222a',
                 userLogin: 'Bohr'
             },
             "createdAt": expect.any(String)
         })
 
         const jestResponse2 = await request(app)
-        .get('/comments/1')
+        .get(`/comments/${jestResponse.body.id}`)
         .expect(200)
 
         expect(jestResponse2.body).toEqual({
-            id: "1",
+            id: jestResponse.body.id,
             content: "Sed ut perspiciatis unde omnis iste natus error",
             commentatorInfo: {
-                userId: '2',
+                userId: '66e28d91c4f3b7f1204e222a',
                 userLogin: 'Bohr'
             },
             "createdAt": expect.any(String)
@@ -172,7 +173,7 @@ let mongod:MongoMemoryServer
             id: "1",
             content: "Et harum quidem rerum facilis est et expedita distinctio",
             commentatorInfo: {
-                userId: '2',
+                userId: '66e28d91c4f3b7f1204e222a',
                 userLogin: 'Bohr'
             },
             "createdAt": expect.any(String)
@@ -212,11 +213,18 @@ let mongod:MongoMemoryServer
 
         await request(app)
         .get('/comments/1')
-        expect(404)
+        .expect(404)
    })
 
-   it('should return allComments for postId with default pagination', async() =>{
-        await (commentCollection).insertMany(fillComments)
+   it('return 404 for invalid postId/comments', async() =>{
+        await request(app)
+        .get('/posts/5555/comments')
+        .expect(404)
+   })
+
+
+   it('return allComments for postId with default pagination', async() =>{
+        //await (commentCollection).insertMany(fillComments)
         const check = await commentCollection
         .find({postId:'1'}, {projection: {_id:0, postId:0 } })
         .sort('createdAt', 'desc')
@@ -241,7 +249,7 @@ let mongod:MongoMemoryServer
         expect(jestResponse.body).toEqual(checkOutput)
    })
 
-   it('should return allComments for postId with query pagination', async() =>{
+   it('return allComments for postId with query pagination', async() =>{
        
      const check = await commentCollection
         .find({postId:'1'}, {projection: {_id:0, postId:0 }})

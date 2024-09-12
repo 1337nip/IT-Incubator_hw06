@@ -1,13 +1,17 @@
-import { profileEnd } from "console";
+import { Result, StatusCode } from "../../../types/sharedTypes";
 import { commentCollection, postsCollection } from "../../../db/mongo-db";
 import { commentViewModel, commentPaginationModel } from "../models/commentModels";
 import { commentQueryHelper } from "../utilities/commentQueryHelper";
+import { countPages } from "../../../utilities/others/pagesCount";
 
 export const commentQueryRepo = {
-    async findComment(id:string):Promise<commentViewModel|null> {
+    async findComment(id:string):Promise<Result<commentViewModel>> {
         const comment = await commentCollection.findOne({id})
-        if(comment ===null)
-        return null;
+        if(!comment)
+        return  { 
+            statusCode: StatusCode.NotFound,
+            errorMessage: 'Comment not found',
+            }
 
         const commentOuput:commentViewModel = {
             id:comment.id,
@@ -15,13 +19,19 @@ export const commentQueryRepo = {
             commentatorInfo: comment.commentatorInfo,
             createdAt: comment.createdAt
         }
-        return commentOuput;
+        return  { 
+            statusCode: StatusCode.Success,
+            data: commentOuput
+            }
     },
 
-    async getAllComments(postId:string, query:{[key:string] : string | undefined}):Promise<commentPaginationModel | null> {
-        const checkPost = await postsCollection.findOne({id:postId})
-        if(checkPost === null)
-        return null;
+    async getAllComments(postId:string, query:{[key:string] : string | undefined}):Promise<Result<commentPaginationModel | string>> {
+        const result = await postsCollection.findOne({id:postId})
+        if(!result)
+        return {
+            statusCode: StatusCode.NotFound,
+            errorMessage: 'Post not found'
+        }
         
         const processedQuery = commentQueryHelper(query)
 
@@ -33,14 +43,17 @@ export const commentQueryRepo = {
         .toArray()
 
         const totalCount = await commentCollection.countDocuments({postId: postId})
-        const pagesCount = Math.ceil(totalCount/processedQuery.pageSize)
+        const pagesCount = countPages(totalCount, processedQuery.pageSize)
 
         return {
-            'pagesCount': pagesCount,
-            'page': processedQuery.pageNumber,
-            'pageSize': processedQuery.pageSize,
-            'totalCount': totalCount,
-            'items': items
+            statusCode:StatusCode.Success,
+            data: {
+                'pagesCount': pagesCount,
+                'page': processedQuery.pageNumber,
+                'pageSize': processedQuery.pageSize,
+                'totalCount': totalCount,
+                'items': items
+            }
         }
     }
-}
+} 

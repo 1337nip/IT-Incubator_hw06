@@ -54,5 +54,10 @@ exports.postsRepository = {
                 throw new Error(`Cannot create new post with blog id in repository: ${error.message}`);
             }
         });
+    },
+    findPost(postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield mongo_db_1.postsCollection.findOne({ id: postId });
+        });
     }
 };

@@ -19,24 +19,32 @@ const mongo_db_1 = require("../db/mongo-db");
 exports.jwtService = {
     jwtCreate(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = jsonwebtoken_1.default.sign({ userId: user.id }, settings_1.SETTINGS.JWT.SECRET, { expiresIn: '10 days' });
-            return token;
+            return new Promise((resolve, reject) => {
+                jsonwebtoken_1.default.sign({ userId: user.id }, settings_1.SETTINGS.JWT.SECRET, { expiresIn: '10 days' }, (err, token) => {
+                    if (err)
+                        reject(new Error('jwtService: cannot jwt.sign'));
+                    if (token)
+                        resolve(token);
+                });
+            });
         });
     },
     jwtGetUserId(token) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = jsonwebtoken_1.default.verify(token, settings_1.SETTINGS.JWT.SECRET);
-                const userCheck = yield mongo_db_1.userCollection.findOne({ id: result.userId });
-                if (userCheck === null) {
-                    throw new Error('User with this id does not exist');
-                }
-                return result.userId;
-            }
-            catch (error) {
-                console.error(error.message);
-                throw new Error;
-            }
+            const result = yield new Promise((resolve, reject) => {
+                jsonwebtoken_1.default.verify(token, settings_1.SETTINGS.JWT.SECRET, (err, decoded) => {
+                    if (err) {
+                        reject('Bad token: ' + err);
+                    }
+                    if (decoded) {
+                        resolve(decoded);
+                    }
+                });
+            });
+            const userCheck = yield mongo_db_1.userCollection.findOne({ id: result.userId });
+            if (!userCheck)
+                throw new Error('User with this id does not exist');
+            return result.userId;
         });
     }
 };

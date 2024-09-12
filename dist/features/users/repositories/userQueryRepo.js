@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userQueryRepo = void 0;
 const mongo_db_1 = require("../../../db/mongo-db");
 const userQueryHelper_1 = require("../utilities/userQueryHelper");
+const pagesCount_1 = require("../../../utilities/others/pagesCount");
 exports.userQueryRepo = {
     findUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -46,7 +47,7 @@ exports.userQueryRepo = {
                 .limit(processedQuery.pageSize)
                 .toArray();
             const totalCount = yield mongo_db_1.userCollection.countDocuments(filter);
-            const pagesCount = Math.ceil(totalCount / processedQuery.pageSize);
+            const pagesCount = (0, pagesCount_1.countPages)(totalCount, processedQuery.pageSize);
             const usersOutput = users.map(users => {
                 return {
                     id: users.id,

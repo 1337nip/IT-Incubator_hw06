@@ -1,9 +1,10 @@
 
 import { blogCreateModel, blogUpdateModel } from "../models/blogInputModels";
-import { blogsViewModel } from "../models/blogOutputModels";
+import { blogsDbModel } from "../models/blogType";
 import { blogsRepository } from "../repositories/blogRepository";
 import { blogsCollection } from "../../../db/mongo-db";
 import { Error404 } from "../../../types/sharedTypes";
+import { ObjectId } from "mongodb";
 
 export const blogService = {
 
@@ -21,17 +22,11 @@ export const blogService = {
     async createBlog(body:blogCreateModel):Promise<string> {
         const {name, description,websiteUrl} = body
 
-        const latestBlog = await blogsCollection.findOne({}, {sort: {_id: -1}})
-        let newID:string
-       
-        if (latestBlog) {
-        newID = (Number(latestBlog.id)+1).toString()
-        } else {
-        newID = "1"
-        }
+     const newObjId = new ObjectId
 
-        const newBlog:blogsViewModel = {
-            id: newID,
+        const newBlog:blogsDbModel = {
+            _id: newObjId,
+            id: newObjId.toString(),
             name,
             description,
             websiteUrl,

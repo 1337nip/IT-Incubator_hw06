@@ -1,28 +1,26 @@
-import { postsQueryRepo } from "../../posts/repositories/postQueryRepo"
-import { Error404 } from "../../../types/sharedTypes"
-import { commentCollection, postsCollection, userCollection } from "../../../db/mongo-db"
-import { commentCreateModel, } from "../models/commentModels"
+
+import { Result, StatusCode } from "../../../types/sharedTypes"
+import { commentCollection, userCollection } from "../../../db/mongo-db"
+import { commentCreateModel, commentDbModel, } from "../models/commentModels"
 import { commentRepository } from "../repositories/commentRepository"
 import { postsRepository } from "../../posts/repositories/postRepository"
+import { ObjectId } from "mongodb"
+
 
 export const commentService = {
-    async createComment(postId:string, userId:string, content:string):Promise<string> {
-        const checkPost = await postsCollection.findOne({id:postId})
-        if (checkPost===null)
-            throw new Error404('Post with this id does not exist')
+    async createComment(postId:string, userId:string, content:string):Promise<Result<string >> {
+        const checkPost = await postsRepository.findPost(postId)
+        if (!checkPost) return {
+            statusCode: StatusCode.NotFound,
+            errorMessage: 'Post not found',
+        } 
         
-        let id:string
-        const newest = await commentCollection.findOne({}, {sort: {_id: -1}})
-        if (newest) {
-        id = (Number(newest.id)+1).toString()
-        } else {
-        id = "1"
-        }
-
-        const user = await userCollection.findOne({id: userId})
-
-        const newComment:commentCreateModel= {
-            id: id,
+        const user = await userCollection.findOne({id: userId}) //TODO тут точно не должно быть запроса в БД
+        const newObjId = new ObjectId
+        const newComment:commentDbModel= {
+           
+            _id: newObjId,
+            id: newObjId.toString(),
             postId:postId,
             content: content,
             commentatorInfo: {
@@ -33,38 +31,48 @@ export const commentService = {
         }
 
         await commentRepository.createComment(newComment)
-        return id;
+        return {
+            statusCode: StatusCode.Success,
+            data: newComment.id
+         }
     },
 
-    async deleteComment(id:string, userId:string):Promise<null | boolean> {
+    async deleteComment(id:string, userId:string):Promise<Result<string>> {
         const checkComment = await commentRepository.findComment(id)
-        if(checkComment === null) {
-            return null;
-        }
-       if(checkComment.commentatorInfo.userId !== userId)
-            return false;
+        if(!checkComment)
+            return {
+                statusCode: StatusCode.NotFound,
+                errorMessage: 'Comment not found'
+                } 
+          
+        if(checkComment.commentatorInfo.userId !== userId)
+            return {
+                statusCode: StatusCode.Forbidden,
+                errorMessage: 'This user is not allowed to change this comment'
+                } 
 
-      try {
-            await commentRepository.deleteComment(id)
-      }
-        catch(error) {
-            console.error((error as Error).message)
-       }
-       return true;
+        await commentRepository.deleteComment(id)
+        return {
+            statusCode:StatusCode.Success
+        }
     },
 
-    async updateComment(id:string, userId:string, content:string ):Promise<null | boolean> {
+    async updateComment(id:string, userId:string, content:string ):Promise<Result<string>> {
         const result = await commentRepository.findComment(id)
-        if(result === null)
-            return null;
+        if(!result)
+            return {
+                statusCode: StatusCode.NotFound,
+                errorMessage: 'Cannot find comment'
+            }
         if(result.commentatorInfo.userId !== userId)
-            return false;
-        try {
+            return {
+                statusCode:StatusCode.Forbidden,
+                errorMessage: 'This user is not allowed to change this comment' 
+            }
+
         await commentRepository.updateComment(id, content)
+        return {
+            statusCode:StatusCode.Success
         }
-        catch(error) {
-            console.error((error as Error).message)
-        }
-        return true;
     }
 }

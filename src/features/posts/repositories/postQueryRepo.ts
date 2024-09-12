@@ -3,6 +3,7 @@ import { postQueryHelper } from "../utilities/postQueryHelper"
 import { postPaginationModel, postsViewModel } from "../models/postOutputModels"
 import { blogsCollection } from "../../../db/mongo-db"
 import { Error404 } from "../../../types/sharedTypes"
+import { countPages } from "../../../utilities/others/pagesCount"
 
 export const postsQueryRepo = {
 
@@ -15,7 +16,7 @@ export const postsQueryRepo = {
                         .limit(processedQuery.pageSize)
                         .toArray()
         const totalCount = await postsCollection.countDocuments()
-        const pagesCount = Math.ceil(totalCount / processedQuery.pageSize)
+        const pagesCount = countPages(totalCount, processedQuery.pageSize)
             return {
                 "pagesCount": pagesCount,
                 "page": processedQuery.pageNumber,

@@ -9,7 +9,7 @@ export const getAllBlogsController = async (req:Request<{},{},{},{[key: string]:
     const allBlogs = await blogsQueryRepo.getAllBlogs(req.query)
     res.status(200).json(allBlogs)
     }
-    catch (error) {
+    catch (e) {
         console.error('Error fetching blogs:', Error)
         res.sendStatus(500)
     }

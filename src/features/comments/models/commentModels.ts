@@ -14,7 +14,8 @@ export type commentDbModel = {
 
 export type commentCreateModel = {
 
-    id: string,
+    _id: ObjectId,
+    id:string
     postId:string,
     content: string,
     commentatorInfo: {

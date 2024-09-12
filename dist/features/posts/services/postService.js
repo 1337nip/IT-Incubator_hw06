@@ -14,6 +14,7 @@ const postRepository_1 = require("../repositories/postRepository");
 const mongo_db_1 = require("../../../db/mongo-db");
 const mongo_db_2 = require("../../../db/mongo-db");
 const sharedTypes_1 = require("../../../types/sharedTypes");
+const mongodb_1 = require("mongodb");
 exports.postService = {
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,16 +37,10 @@ exports.postService = {
             else {
                 throw new sharedTypes_1.Error404('No blog with such id is found');
             }
-            let newID;
-            const newest = yield mongo_db_1.postsCollection.findOne({}, { sort: { _id: -1 } });
-            if (newest) {
-                newID = (Number(newest.id) + 1).toString();
-            }
-            else {
-                newID = "1";
-            }
+            const newObjId = new mongodb_1.ObjectId;
             const newPost = {
-                id: newID,
+                _id: newObjId,
+                id: newObjId.toString(),
                 title,
                 shortDescription,
                 content,
@@ -83,17 +78,11 @@ exports.postService = {
                 throw new sharedTypes_1.Error404('No blog with this id is found');
             }
             const { title, shortDescription, content } = body;
-            const newest = yield mongo_db_1.postsCollection.findOne({}, { sort: { _id: -1 } });
-            let newID;
-            if (newest) {
-                newID = (Number(newest.id) + 1).toString();
-            }
-            else {
-                newID = "1";
-            }
             const blogName = blog.name;
+            const newObjId = new mongodb_1.ObjectId;
             const newPost = {
-                id: newID,
+                _id: newObjId,
+                id: newObjId.toString(),
                 title,
                 shortDescription,
                 content,
@@ -103,7 +92,7 @@ exports.postService = {
             };
             try {
                 yield postRepository_1.postsRepository.createPostByBlog(newPost);
-                return newID;
+                return newPost.id;
             }
             catch (error) {
                 throw new Error(`Cannot create new post with blog id in service: ${error.message}`);

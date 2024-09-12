@@ -13,6 +13,7 @@ exports.blogService = void 0;
 const blogRepository_1 = require("../repositories/blogRepository");
 const mongo_db_1 = require("../../../db/mongo-db");
 const sharedTypes_1 = require("../../../types/sharedTypes");
+const mongodb_1 = require("mongodb");
 exports.blogService = {
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -27,16 +28,10 @@ exports.blogService = {
     createBlog(body) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, description, websiteUrl } = body;
-            const latestBlog = yield mongo_db_1.blogsCollection.findOne({}, { sort: { _id: -1 } });
-            let newID;
-            if (latestBlog) {
-                newID = (Number(latestBlog.id) + 1).toString();
-            }
-            else {
-                newID = "1";
-            }
+            const newObjId = new mongodb_1.ObjectId;
             const newBlog = {
-                id: newID,
+                _id: newObjId,
+                id: newObjId.toString(),
                 name,
                 description,
                 websiteUrl,

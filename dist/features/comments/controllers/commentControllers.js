@@ -10,83 +10,117 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentController = void 0;
-const sharedTypes_1 = require("../../../types/sharedTypes");
 const commentService_1 = require("../services/commentService");
 const commentQueryRepo_1 = require("../repositories/commentQueryRepo");
 exports.commentController = {
     createComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const newCommentId = yield commentService_1.commentService.createComment(req.params.id, req.userId, req.body.content);
-                const newCommentOuput = yield commentQueryRepo_1.commentQueryRepo.findComment(newCommentId);
-                if (newCommentOuput)
-                    res.status(201).json(newCommentOuput);
+                const result = yield commentService_1.commentService.createComment(req.params.id, req.userId, req.body.content);
+                switch (result.statusCode) {
+                    case 4:
+                        res.sendStatus(404);
+                        return;
+                    case 3:
+                        res.sendStatus(403);
+                        return;
+                    case 0:
+                        if (result.data) {
+                            const comment = yield commentQueryRepo_1.commentQueryRepo.findComment(result.data);
+                            res.status(201).json(comment.data);
+                        }
+                        else {
+                            throw new Error('CreateCommentController: Comment created, id received, but cannot fetch comment with this id from DB');
+                        }
+                }
             }
             catch (error) {
-                if (error instanceof sharedTypes_1.Error404)
-                    res.sendStatus(404);
-                else {
-                    console.error(Error);
-                    res.sendStatus(500);
-                }
+                console.error(error);
+                res.sendStatus(500);
             }
         });
     },
     findComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const commentOutput = yield commentQueryRepo_1.commentQueryRepo.findComment(req.params.id);
-            if (commentOutput === null) {
-                res.sendStatus(404);
-                return;
+            try {
+                const result = yield commentQueryRepo_1.commentQueryRepo.findComment(req.params.id);
+                switch (result.statusCode) {
+                    case 4:
+                        res.sendStatus(404);
+                        return;
+                    case 0:
+                        res.status(200).json(result.data);
+                        return;
+                }
             }
-            res.status(200).json(commentOutput);
-            return;
+            catch (error) {
+                console.error(error);
+                res.sendStatus(500);
+            }
         });
     },
     deleteComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield commentService_1.commentService.deleteComment(req.params.id, req.userId);
-                if (result === null) {
-                    res.sendStatus(404);
-                    return;
+                switch (result.statusCode) {
+                    case 4:
+                        res.sendStatus(404);
+                        return;
+                    case 3:
+                        res.sendStatus(403);
+                        return;
+                    case 0:
+                        res.sendStatus(204);
+                        return;
                 }
-                if (result === false) {
-                    res.sendStatus(403);
-                    return;
-                }
-                res.sendStatus(204);
-                return;
             }
             catch (error) {
-                console.error(error.message);
+                console.error(error);
+                res.sendStatus(500);
             }
         });
     },
+    //TODO CodeReview
     getAllComments(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield commentQueryRepo_1.commentQueryRepo.getAllComments(req.params.id, req.query);
-            if (result === null) {
-                res.sendStatus(404);
-                return;
+            try {
+                const result = yield commentQueryRepo_1.commentQueryRepo.getAllComments(req.params.id, req.query);
+                switch (result.statusCode) {
+                    case 4:
+                        res.sendStatus(404);
+                        return;
+                    case 0:
+                        if (typeof result.data !== 'string' && result.data !== undefined) { //TODO это TypeGuard
+                            res.status(200).json(result.data);
+                            return;
+                        }
+                        else
+                            throw new Error('GetAllComments controller: cannot get comments from QueryRepo');
+                }
             }
-            res.status(200).json(result);
-            return;
+            catch (error) {
+                console.error(error);
+                res.sendStatus(500);
+            }
         });
     },
     updateComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield commentService_1.commentService.updateComment(req.params.id, req.userId, req.body.content);
-                if (result === null)
-                    res.sendStatus(404);
-                if (result === false)
-                    res.sendStatus(403);
-                res.sendStatus(204);
-                return;
+                switch (result.statusCode) {
+                    case 4:
+                        return res.sendStatus(404);
+                    case 3:
+                        return res.sendStatus(403);
+                    case 0:
+                        return res.sendStatus(204);
+                }
             }
             catch (error) {
-                console.error(error.message);
+                console.error(Error);
+                return res.sendStatus(500);
             }
         });
     }

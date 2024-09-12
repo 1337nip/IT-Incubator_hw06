@@ -16,7 +16,7 @@ const getAllBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const allBlogs = yield blogQueryRepo_1.blogsQueryRepo.getAllBlogs(req.query);
         res.status(200).json(allBlogs);
     }
-    catch (error) {
+    catch (e) {
         console.error('Error fetching blogs:', Error);
         res.sendStatus(500);
     }

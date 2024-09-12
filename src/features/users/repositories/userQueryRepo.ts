@@ -1,6 +1,7 @@
 import { userCollection } from "../../../db/mongo-db";
 import { authMeViewModel, getUsersReturn, userDbModel, userPaginationModel, userQuery, userViewModel} from "../models/userModels";
 import { userQueryHelper } from "../utilities/userQueryHelper";
+import { countPages } from "../../../utilities/others/pagesCount";
 
 
 export const userQueryRepo = {
@@ -40,7 +41,7 @@ export const userQueryRepo = {
                             .limit(processedQuery.pageSize)
                             .toArray()
         const totalCount = await userCollection.countDocuments(filter)
-        const pagesCount = Math.ceil(totalCount / processedQuery.pageSize)
+        const pagesCount = countPages(totalCount,processedQuery.pageSize)
         
         const usersOutput:userViewModel[] = users.map(users =>{
             return {

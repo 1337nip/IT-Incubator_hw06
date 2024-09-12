@@ -1,4 +1,5 @@
 import { blogsCollection } from "../../../db/mongo-db"
+import { countPages } from "../../../utilities/others/pagesCount"
 import { blogPaginationModel } from "../models/blogOutputModels"
 import { blogsViewModel } from "../models/blogOutputModels"
 
@@ -17,7 +18,7 @@ export const blogsQueryRepo = {
                     .limit(processedQuery.pageSize)
                     .toArray()
     const totalCount = await blogsCollection.countDocuments(filter)
-    const pagesCount = Math.ceil(totalCount / processedQuery.pageSize)
+    const pagesCount = countPages(totalCount,processedQuery.pageSize)
         return {
             "pagesCount": pagesCount,
             "page": processedQuery.pageNumber,

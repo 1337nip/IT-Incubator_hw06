@@ -8,5 +8,5 @@ const commentQueryHelper = (query) => {
         sortBy: query.sortBy ? query.sortBy : 'createdAt',
         sortDirection: query.sortDirection ? query.sortDirection : 'desc',
     };
-};
+}; //TODO тут нужно оформить санитайзер
 exports.commentQueryHelper = commentQueryHelper;

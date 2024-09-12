@@ -3,7 +3,7 @@ import { userCollection } from "../../../db/mongo-db";
 
 export const userRepository = {
     
-    async createUser(newUser:userCreateModel):Promise<void> {
+    async createUser(newUser:userDbModel):Promise<void> {
         await userCollection.insertOne(newUser)
     },
     

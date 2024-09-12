@@ -1,10 +1,11 @@
 import { postCreateModel, postUpdateModel } from "../models/postInputModels";
-import { postPaginationModel, postsViewModel } from "../models/postOutputModels";
-import { postsQueryRepo } from "../repositories/postQueryRepo";
+import { postsViewModel } from "../models/postOutputModels";
 import { postsRepository } from "../repositories/postRepository";
 import { postsCollection } from "../../../db/mongo-db";
 import { blogsCollection } from "../../../db/mongo-db";
 import { Error404, ErrorResponse} from "../../../types/sharedTypes";
+import { postsDbModel } from "../models/postType";
+import { ObjectId } from "mongodb";
 
 
 
@@ -19,7 +20,7 @@ export const postService = {
         }
     },
 
-    async createPost(body:postCreateModel): Promise<string| ErrorResponse> {
+    async createPost(body:postsDbModel): Promise<string| ErrorResponse> {
         const {title, shortDescription,content,blogId} = body
         
         let blogName:string
@@ -31,16 +32,11 @@ export const postService = {
            throw new Error404 ('No blog with such id is found')
             }
         
-        let newID:string
-        const newest = await postsCollection.findOne({}, {sort: {_id: -1}})
-        if (newest) {
-        newID = (Number(newest.id)+1).toString()
-        } else {
-        newID = "1"
-        }
+        const newObjId = new ObjectId
 
-        const newPost:postsViewModel = {
-            id: newID,
+        const newPost:postsDbModel = {
+            _id: newObjId,
+            id: newObjId.toString(),
             title,
             shortDescription,
             content,
@@ -79,20 +75,13 @@ export const postService = {
         }
 
         const {title, shortDescription,content} = body
-        const newest = await postsCollection.findOne({}, {sort: {_id: -1}})
-        let newID:string
-  
-        if (newest) {
-           newID = (Number(newest.id)+1).toString()
-           } else {
-           newID = "1"
-           }
-  
         const blogName:string = blog.name
+        const newObjId = new ObjectId
     
      
-        const newPost:postsViewModel = {
-            id: newID,
+        const newPost:postsDbModel = {
+            _id: newObjId,
+            id: newObjId.toString(),
             title,
             shortDescription,
             content,
@@ -103,7 +92,7 @@ export const postService = {
 
         try {
         await postsRepository.createPostByBlog(newPost)
-        return newID;
+        return newPost.id;
         }
         catch(error) {
             throw new Error(`Cannot create new post with blog id in service: ${(error as Error).message}`)

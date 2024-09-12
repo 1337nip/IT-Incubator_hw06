@@ -1,30 +1,115 @@
 import { commentDbModel, commentViewModel } from "../src/features/comments/models/commentModels"
 import { postsType } from "../src/features/posts/models/postType"
+import { ObjectId } from "mongodb"
 
 export const fillUsers = [
-  {
-    "id": "1",
-    "login": "Einstein",
-    "passwordHash": "$2b$10$g5tZHQxi.jgEBU8H8vifauTxt9QXLVstdt6nTB3A7wbLtJffkGKvy",
-    "email": "nodice@mail.com",
-    "createdAt": "2024-09-08T18:24:21.794Z"
-  },
-  {
-   
-    "id": "2",
-    "login": "Bohr",
-    "passwordHash": "$2b$10$XassO/NxpSdl//PGy8Nd/.xjht0CDIs948SfObmA5qE0OL.8Bk5te",
-    "email": "newphysics@test.com",
-    "createdAt": "2024-09-08T18:25:44.946Z"
-  },
+    {
+        "_id":new ObjectId( '65006408082dbe6d9f6206f1'),
+        "id": "1",
+        "login": "Einstein",
+        "passwordHash": "$2b$10$g5tZHQxi.jgEBU8H8vifauTxt9QXLVstdt6nTB3A7wbLtJffkGKvy",
+        "email": "nodice@mail.com",
+        "createdAt": "2024-09-08T18:24:21.794Z"
+    },
+    {
+        "_id": new ObjectId('66e28d91c4f3b7f1204e222a'),
+        "id": "66e28d91c4f3b7f1204e222a",
+        "login": "Bohr",
+        "passwordHash": "$2b$10$XassO/NxpSdl//PGy8Nd/.xjht0CDIs948SfObmA5qE0OL.8Bk5te",
+        "email": "newphysics@test.com",
+        "createdAt": "2024-09-08T18:25:44.946Z"
+    },
+    {
+        "_id": new ObjectId('66e29124c4f3b7f1204e222c'),
+        "id": "66e29124c4f3b7f1204e222c",
+        "login": "Kurchatov",
+        "passwordHash": "$2b$10$Gew4AHBI8xAc/ujYXXoSoOUlHmDv1CeUmJVdTD0e3SbDItcgee.Fe",
+        "email": "nuclearadmin@kremlin.ru",
+        "createdAt": "2024-09-10T05:04:20.902Z"
+    },
 
-  {
-    "id": "3",
-    "login": "Kurchatov",
-    "passwordHash": "$2b$10$Gew4AHBI8xAc/ujYXXoSoOUlHmDv1CeUmJVdTD0e3SbDItcgee.Fe",
-    "email": "nuclearadmin@kremlin.ru",
-    "createdAt": "2024-09-10T05:04:20.902Z"
-  }
+    {
+        "_id": new ObjectId("6500d10082dbe6d9f6207001"),
+        "id": "6500d10082dbe6d9f6207001",
+        "login": "Einstein",
+        "passwordHash": "randomhash",
+        "email": "einstein@physics.com",
+        "createdAt": "2023-08-10T14:15:30.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10182dbe6d9f6207002"),
+        "id": "6500d10182dbe6d9f6207002",
+        "login": "Newton",
+        "passwordHash": "randomhash",
+        "email": "newton@physics.com",
+        "createdAt": "2024-03-05T10:11:25.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10282dbe6d9f6207003"),
+        "id": "6500d10282dbe6d9f6207003",
+        "login": "Curie",
+        "passwordHash": "randomhash",
+        "email": "curie@radiation.com",
+        "createdAt": "2024-01-20T08:05:45.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10382dbe6d9f6207004"),
+        "id": "6500d10382dbe6d9f6207004",
+        "login": "Oppenheimer",
+        "passwordHash": "randomhash",
+        "email": "bohr@atom.com",
+        "createdAt": "2023-11-18T16:25:00.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10482dbe6d9f6207005"),
+        "id": "6500d10482dbe6d9f6207005",
+        "login": "Schrodinger",
+        "passwordHash": "randomhash",
+        "email": "schrodinger@quantum.com",
+        "createdAt": "2024-04-15T09:30:10.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10582dbe6d9f6207006"),
+        "id": "6500d10582dbe6d9f6207006",
+        "login": "Feynman",
+        "passwordHash": "randomhash",
+        "email": "feynman@particles.com",
+        "createdAt": "2023-12-05T11:45:50.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10682dbe6d9f6207007"),
+        "id": "6500d10682dbe6d9f6207007",
+        "login": "Hawking",
+        "passwordHash": "randomhash",
+        "email": "hawking@cosmos.com",
+        "createdAt": "2024-06-25T14:00:30.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10782dbe6d9f6207008"),
+        "id": "6500d10782dbe6d9f6207008",
+        "login": "Heisenberg",
+        "passwordHash": "randomhash",
+        "email": "heisenberg@uncertainty.com",
+        "createdAt": "2024-02-12T19:55:40.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10882dbe6d9f6207009"),
+        "id": "6500d10882dbe6d9f6207009",
+        "login": "Dirac",
+        "passwordHash": "randomhash",
+        "email": "dirac@quantumfield.com",
+        "createdAt": "2024-05-01T07:35:15.000Z"
+      },
+      {
+        "_id": new ObjectId("6500d10982dbe6d9f620700a"),
+        "id": "6500d10982dbe6d9f620700a",
+        "login": "Galileo",
+        "passwordHash": "randomhash",
+        "email": "galileo@astronomy.com",
+        "createdAt": "2024-07-30T22:50:55.000Z"
+      }
+      
+    
   ]  
 
 export const fillPosts:postsType[] = [
@@ -54,7 +139,7 @@ export const fillComments: commentDbModel[] = [
       "postId": "1",
       "content": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti",
       "commentatorInfo": {
-          "userId": "2",
+          "userId": "66e28d91c4f3b7f1204e222a",
           "userLogin": "Bohr"
       },
       "createdAt": "2024-09-10T10:49:14.885Z"

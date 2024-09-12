@@ -5,8 +5,7 @@ import { checkPassword } from "../../../utilities/passwordHashing";
 
 export const authService = {
     
-    async login(loginOrEmail:string, password:string):Promise<boolean|string|ErrorResponse> {
-        
+    async login(loginOrEmail:string, password:string):Promise<boolean|string> {        
         try {
             const filter = {
                $or: [{login:loginOrEmail}, {email:loginOrEmail}]
