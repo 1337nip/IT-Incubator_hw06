@@ -38,8 +38,9 @@ export const  connectToDb = async (MONGO_URL: string) => {
 }
 
 export const eraseDB = async() => {
-    await blogsCollection.drop()
-    await postsCollection.drop()
-    await userCollection.drop()
+    await blogsCollection.deleteMany()
+    await postsCollection.deleteMany()
+    await userCollection.deleteMany()
+    await commentCollection.deleteMany()
     
 }
