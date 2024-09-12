@@ -20,7 +20,7 @@ export const postService = {
         }
     },
 
-    async createPost(body:postsDbModel): Promise<string| ErrorResponse> {
+    async createPost(body:postCreateModel): Promise<string| ErrorResponse> {
         const {title, shortDescription,content,blogId} = body
         
         let blogName:string
