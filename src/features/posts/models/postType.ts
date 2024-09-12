@@ -1,5 +1,8 @@
-export type postsType = {
+import { ObjectId } from "mongodb"
 
+export type postsDbModel = {
+
+    _id:ObjectId
     id: string,
     title: string,
     shortDescription: string,

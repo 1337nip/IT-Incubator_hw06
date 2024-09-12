@@ -2,7 +2,7 @@ import { commentCollection } from "../../../db/mongo-db";
 import { commentCreateModel, commentDbModel } from "../models/commentModels";
 
 export const commentRepository = {
-    async createComment(newComment:commentCreateModel):Promise<void> {
+    async createComment(newComment:commentDbModel):Promise<void> {
         await commentCollection.insertOne(newComment)
     },
 

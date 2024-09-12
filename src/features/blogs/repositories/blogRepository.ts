@@ -1,14 +1,14 @@
 
 import { blogsCollection } from "../../../db/mongo-db"
-import { blogsViewModel } from "../models/blogOutputModels"
-import { blogCreateModel, blogUpdateModel } from "../models/blogInputModels"
-import { blogsType } from "../models/blogType"
+import { blogUpdateModel } from "../models/blogInputModels"
+import { blogsDbModel } from "../models/blogType"
+
 
 
 
 export const blogsRepository = {
 
-    async getAllBlogs(): Promise<blogsViewModel[]> {
+    async getAllBlogs(): Promise<blogsDbModel[]> {
        return blogsCollection.find({}, {projection: {_id:0}}).toArray()
     },
 
@@ -21,7 +21,7 @@ export const blogsRepository = {
         }
     },
 
-    async createBlog(newBlog:blogsViewModel):Promise<void> {
+    async createBlog(newBlog:blogsDbModel):Promise<void> {
     
         try {
         await blogsCollection.insertOne(newBlog)

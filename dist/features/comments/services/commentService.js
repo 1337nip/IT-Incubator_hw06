@@ -14,6 +14,7 @@ const sharedTypes_1 = require("../../../types/sharedTypes");
 const mongo_db_1 = require("../../../db/mongo-db");
 const commentRepository_1 = require("../repositories/commentRepository");
 const postRepository_1 = require("../../posts/repositories/postRepository");
+const mongodb_1 = require("mongodb");
 exports.commentService = {
     createComment(postId, userId, content) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,19 +24,11 @@ exports.commentService = {
                     statusCode: sharedTypes_1.StatusCode.NotFound,
                     errorMessage: 'Post not found',
                 };
-            let id;
-            const newest = yield mongo_db_1.commentCollection.findOne({}, { sort: { _id: -1 } }); //TODO тут не должно быть запроса напрямую в БД, тут и своего айди не должно быть
-            if (newest) {
-                id = (Number(newest.id) + 1).toString();
-            }
-            else {
-                id = "1";
-            }
-            //TODO typeGuard?
-            //TODO реализовать throw new {}
             const user = yield mongo_db_1.userCollection.findOne({ id: userId }); //TODO тут точно не должно быть запроса в БД
+            const newObjId = new mongodb_1.ObjectId;
             const newComment = {
-                id: id,
+                _id: newObjId,
+                id: newObjId.toString(),
                 postId: postId,
                 content: content,
                 commentatorInfo: {
@@ -47,7 +40,7 @@ exports.commentService = {
             yield commentRepository_1.commentRepository.createComment(newComment);
             return {
                 statusCode: sharedTypes_1.StatusCode.Success,
-                data: id
+                data: newComment.id
             };
         });
     },

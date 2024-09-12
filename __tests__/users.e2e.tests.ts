@@ -2,9 +2,10 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connectToDb, userCollection } from '../src/db/mongo-db';
 import request from 'supertest';
 import {app} from '../src/app'
-import { userDbModel, userCreateModel, userInputModel, userPaginationModel } from '../src/features/users/models/userModels';
+import { userInputModel} from '../src/features/users/models/userModels';
 import { fillUsers } from './testData';
-import { userQueryHelper } from '../src/features/users/utilities/userQueryHelper';
+import { ObjectId } from 'mongodb';
+
 
 describe ('/users/', () => {
 
@@ -39,7 +40,7 @@ let mongod:MongoMemoryServer
         expect(jestResponse.body).toEqual({
             login: 'Badabam',
             email: 'badabam@aol.com',
-            id:'1',
+            id:expect.any(String),
             createdAt: expect.any(String),
         })
 
@@ -54,7 +55,7 @@ let mongod:MongoMemoryServer
             "totalCount": 1,
             "items": [
               {
-                id: '1',
+                id: jestResponse.body.id,
                 login: 'Badabam',
                 email: 'badabam@aol.com',
                 createdAt: expect.any(String)
@@ -87,7 +88,7 @@ let mongod:MongoMemoryServer
             "totalCount": 1,
             "items": [
               {
-                id: '1',
+                id: expect.any(String),
                 login: 'Badabam',
                 email: 'badabam@aol.com',
                 createdAt: expect.any(String)
@@ -139,7 +140,7 @@ let mongod:MongoMemoryServer
         "totalCount": 1,
         "items": [
           {
-            id: '1',
+            id: expect.any(String),
             login: 'Badabam',
             email: 'badabam@aol.com',
             createdAt: expect.any(String)
@@ -274,7 +275,7 @@ let mongod:MongoMemoryServer
             "totalCount": 1,
             "items": [
             {
-                id: '1',
+                id: expect.any(String),
                 login: 'Badabam',
                 email: 'badabam@aol.com',
                 createdAt: expect.any(String)
@@ -283,6 +284,14 @@ let mongod:MongoMemoryServer
     })
 
     it('should delete user by id: check authorization, check deletion in DB', async() =>{
+        userCollection.deleteMany()
+        userCollection.insertOne({_id:new ObjectId( '65006408082dbe6d9f6206f1'),
+            id: '1',
+            login: 'Badabam',
+            email: 'badabam@aol.com',
+            passwordHash: 'do not need for test',
+            createdAt: "2024-09-08T18:24:21.794Z"
+        })
         await request(app)
         .delete('/users/1')
         .expect(401)
@@ -298,7 +307,7 @@ let mongod:MongoMemoryServer
             "totalCount": 1,
             "items": [
             {
-                id: '1',
+                id: expect.any(String),
                 login: 'Badabam',
                 email: 'badabam@aol.com',
                 createdAt: expect.any(String)
@@ -330,13 +339,14 @@ let mongod:MongoMemoryServer
 
 
     it('GET /users without search, default pagination ', async() =>  {
+        userCollection.deleteMany()
         userCollection.insertMany(fillUsers)
         const jestResponse = await request(app)
         .get('/users')
         .expect(200)
 
         const check = await userCollection
-        .find({}, {projection: {_id:0, password:0}})
+        .find({}, {projection: {_id:0, password:0, passwordHash:0}})
         .sort('createdAt', 'desc')
         .limit(10)
         .toArray()
@@ -345,7 +355,7 @@ let mongod:MongoMemoryServer
             "pagesCount": 2,
             "page": 1,
             "pageSize": 10,
-            "totalCount": 11,
+            "totalCount": 13,
             "items": check
         })
      })
@@ -358,17 +368,17 @@ let mongod:MongoMemoryServer
         .expect(200)
 
         const check = await userCollection
-        .find({}, {projection: {_id:0, password:0}})
+        .find({}, {projection: {_id:0, password:0, passwordHash:0}})
         .sort('login', 'asc')
         .skip(3)
         .limit(3)
         .toArray()
 
         expect(jestResponse.body).toEqual({
-            "pagesCount": 4,
+            "pagesCount": 5,
             "page": 2,
             "pageSize": 3,
-            "totalCount": 11,
+            "totalCount": 13,
             "items": check
         })
     })
@@ -381,7 +391,7 @@ let mongod:MongoMemoryServer
         .expect(200)
 
         const check = await userCollection
-        .find({$or:[{login:RegExp ('X','i')}, {email: RegExp ('k','i')}]}, {projection: {_id:0, password:0}})
+        .find({$or:[{login:RegExp ('X','i')}, {email: RegExp ('k','i')}]}, {projection: {_id:0, password:0, passwordHash:0}})
         .sort('email', 'asc')
         .skip(0)
         .limit(5)
@@ -392,7 +402,7 @@ let mongod:MongoMemoryServer
             "pagesCount": 1,
             "page": 1,
             "pageSize": 5,
-            "totalCount": 4,
+            "totalCount": 2,
             "items": check
         })
     })

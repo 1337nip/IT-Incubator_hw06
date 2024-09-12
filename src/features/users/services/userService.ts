@@ -5,6 +5,7 @@ import { userQueryRepo } from "../repositories/userQueryRepo";
 import { userRepository } from "../repositories/userRepository";
 import { checkUnique } from "../utilities/checkUnique";
 import { hashPassword } from "../../../utilities/passwordHashing";
+import { ObjectId } from "mongodb";
 
 
 export const userService = {
@@ -15,17 +16,12 @@ export const userService = {
         if (uniqueError) 
             return uniqueError;
         
-        let id:string
-        const newest = await userCollection.findOne({}, {sort: {_id: -1}})
-        if (newest) {
-        id = (Number(newest.id)+1).toString()
-        } else {
-        id = "1"
-        }
-
+        const newObjId = new ObjectId
         const passwordHash = await hashPassword(password)
-        const newUser:userCreateModel = {
-            id,
+        const newUser:userDbModel = {
+            
+            _id: newObjId,
+            id: newObjId.toString(),
             login,
             passwordHash,
             email,
@@ -33,7 +29,7 @@ export const userService = {
         }
         try {
             await userRepository.createUser(newUser)
-            return id;
+            return newUser.id;
         }
         catch(error) {
             throw new Error(`Cannot create new user in repository: ${(error as Error).message}`)
@@ -43,7 +39,7 @@ export const userService = {
 
     async deleteUser(id:string):Promise<void | ErrorsMessages> {
             const result = await userQueryRepo.findUser(id)
-            if(result === null)
+            if(!result)
                 throw new Error404('Cannot find user to delete')
         try {
             await userRepository.deleteUser(id)

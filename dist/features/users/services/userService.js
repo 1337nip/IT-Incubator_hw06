@@ -10,12 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userService = void 0;
-const mongo_db_1 = require("../../../db/mongo-db");
 const sharedTypes_1 = require("../../../types/sharedTypes");
 const userQueryRepo_1 = require("../repositories/userQueryRepo");
 const userRepository_1 = require("../repositories/userRepository");
 const checkUnique_1 = require("../utilities/checkUnique");
 const passwordHashing_1 = require("../../../utilities/passwordHashing");
+const mongodb_1 = require("mongodb");
 exports.userService = {
     createUser(body) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,17 +23,11 @@ exports.userService = {
             const uniqueError = yield (0, checkUnique_1.checkUnique)(login, email);
             if (uniqueError)
                 return uniqueError;
-            let id;
-            const newest = yield mongo_db_1.userCollection.findOne({}, { sort: { _id: -1 } });
-            if (newest) {
-                id = (Number(newest.id) + 1).toString();
-            }
-            else {
-                id = "1";
-            }
+            const newObjId = new mongodb_1.ObjectId;
             const passwordHash = yield (0, passwordHashing_1.hashPassword)(password);
             const newUser = {
-                id,
+                _id: newObjId,
+                id: newObjId.toString(),
                 login,
                 passwordHash,
                 email,
@@ -41,7 +35,7 @@ exports.userService = {
             };
             try {
                 yield userRepository_1.userRepository.createUser(newUser);
-                return id;
+                return newUser.id;
             }
             catch (error) {
                 throw new Error(`Cannot create new user in repository: ${error.message}`);
@@ -51,7 +45,7 @@ exports.userService = {
     deleteUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield userQueryRepo_1.userQueryRepo.findUser(id);
-            if (result === null)
+            if (!result)
                 throw new sharedTypes_1.Error404('Cannot find user to delete');
             try {
                 yield userRepository_1.userRepository.deleteUser(id);

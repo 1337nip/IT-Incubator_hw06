@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb"
 
 export type userDbModel = {
         
-        _id?: ObjectId
+        _id: ObjectId
         id: string
         login:string
         passwordHash: string

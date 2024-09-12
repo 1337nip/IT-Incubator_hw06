@@ -1,18 +1,15 @@
-import { postsViewModel} from "../models/postOutputModels";
-import { blogsCollection, postsCollection } from "../../../db/mongo-db";
-import { postCreateModel, postUpdateModel } from "../models/postInputModels";
-
+import { postsDbModel } from "../models/postType";
+import {  postsCollection } from "../../../db/mongo-db";
+import { postUpdateModel } from "../models/postInputModels";
 import { ErrorResponse } from "../../../types/sharedTypes";
-import { postsType } from "../models/postType";
+import { postsViewModel } from "../models/postOutputModels";
 
 export const postsRepository = {
 
- async getAllPosts():Promise<postsViewModel[]> {
-    return postsCollection.find({}, {projection: {_id:0}}).toArray()
- },
+   async getAllPosts():Promise<postsDbModel[]> {
+      return postsCollection.find({}, {projection: {_id:0}}).toArray()
+   },
  
-
-
    async deletePost(passedID:string) {
       
       const result =  await postsCollection.deleteOne({id : passedID})
@@ -22,7 +19,7 @@ export const postsRepository = {
       }     
   },
 
-  async createPost(newPost:postsViewModel):Promise<string | ErrorResponse> {
+  async createPost(newPost:postsDbModel):Promise<string | ErrorResponse> {
 
       try {
          await postsCollection.insertOne(newPost)
@@ -42,7 +39,7 @@ export const postsRepository = {
       }
    },
 
-   async createPostByBlog(newPost:postsViewModel):Promise<void | ErrorResponse> {
+   async createPostByBlog(newPost:postsDbModel):Promise<void | ErrorResponse> {
       
       try { 
       await postsCollection.insertOne(newPost)
@@ -52,7 +49,7 @@ export const postsRepository = {
       }
    },
 
-   async findPost(postId:string):Promise<postsType | null>{
+   async findPost(postId:string):Promise<postsViewModel | null>{
       return await postsCollection.findOne({id: postId})
    }
 }

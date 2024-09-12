@@ -1,9 +1,10 @@
 
 import { Result, StatusCode } from "../../../types/sharedTypes"
 import { commentCollection, userCollection } from "../../../db/mongo-db"
-import { commentCreateModel, } from "../models/commentModels"
+import { commentCreateModel, commentDbModel, } from "../models/commentModels"
 import { commentRepository } from "../repositories/commentRepository"
 import { postsRepository } from "../../posts/repositories/postRepository"
+import { ObjectId } from "mongodb"
 
 
 export const commentService = {
@@ -14,19 +15,12 @@ export const commentService = {
             errorMessage: 'Post not found',
         } 
         
-        let id:string
-        const newest = await commentCollection.findOne({}, {sort: {_id: -1}}) //TODO тут не должно быть запроса напрямую в БД, тут и своего айди не должно быть
-        if (newest) {
-        id = (Number(newest.id)+1).toString()
-        } else {
-        id = "1"
-        }
-        //TODO typeGuard?
-        //TODO реализовать throw new {}
         const user = await userCollection.findOne({id: userId}) //TODO тут точно не должно быть запроса в БД
-
-        const newComment:commentCreateModel= {
-            id: id,
+        const newObjId = new ObjectId
+        const newComment:commentDbModel= {
+           
+            _id: newObjId,
+            id: newObjId.toString(),
             postId:postId,
             content: content,
             commentatorInfo: {
@@ -39,7 +33,7 @@ export const commentService = {
         await commentRepository.createComment(newComment)
         return {
             statusCode: StatusCode.Success,
-            data: id
+            data: newComment.id
          }
     },
 
