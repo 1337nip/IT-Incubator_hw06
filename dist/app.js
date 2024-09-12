@@ -32,3 +32,7 @@ exports.app.delete('/testing/all-data', (req, res) => __awaiter(void 0, void 0, 
     yield (0, mongo_db_1.eraseDB)();
     res.sendStatus(204);
 }));
+exports.app.get('/test/', (req, res) => {
+    res.send('hello');
+    res.sendStatus(200);
+});

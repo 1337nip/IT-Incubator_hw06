@@ -1,5 +1,4 @@
 import { postCreateModel, postUpdateModel } from "../models/postInputModels";
-import { postsViewModel } from "../models/postOutputModels";
 import { postsRepository } from "../repositories/postRepository";
 import { postsCollection } from "../../../db/mongo-db";
 import { blogsCollection } from "../../../db/mongo-db";
